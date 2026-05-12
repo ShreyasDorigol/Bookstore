@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookStore - Online Bookstore</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>📚 BookStore</h1>
+            <p>Your Favorite Online Bookstore</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Search Bar  and Cart Button-->
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 20px;">
+    <input type="text" id="searchInput" class="search-bar" 
+           placeholder="🔍 Search by book title or author..." 
+           onkeyup="searchBooks()"
+           style="margin-bottom: 0; flex: 1; min-width: 200px;">
+    
+    <a href="cart.html" class="btn btn-primary" style="white-space: nowrap; padding: 14px 28px; font-size: 0.85rem;">
+        🛒 
+    </a>
+</div>
+
+        <!-- Books Grid -->
+        <div id="booksContainer" class="book-grid"></div>
+
+    </div>
+
+    <script>
+        let allBooks = [];
+
+        // Load all books when page loads
+        async function loadBooks() {
+            try {
+                const response = await fetch('/api/books');
+                allBooks = await response.json();
+                displayBooks(allBooks);
+            } catch (error) {
+                console.error("Error loading books:", error);
+                document.getElementById('booksContainer').innerHTML = 
+                    "<h2 style='color:red; text-align:center;'>Failed to load books. Is server running?</h2>";
+            }
+        }
+
+        // Display books in grid
+        function displayBooks(books) {
+            const container = document.getElementById('booksContainer');
+            container.innerHTML = '';
+
+            if (books.length === 0) {
+                container.innerHTML = "<h2>No books found 😔</h2>";
+                return;
+            }
+
+            books.forEach(book => {
+                container.innerHTML += `
+                    <div class="book-card">
+                        <img src="${book.imageUrl}" alt="${book.title}">
+                        <div class="book-info">
+                            <h3>${book.title}</h3>
+                            <p><strong>${book.author}</strong></p>
+                            <p class="price">₹${book.price}</p>
+                            
+                            <div style="margin-top: 15px;">
+                                <button class="btn btn-primary" 
+                                        onclick="addToCart(${book.id})">
+                                    Add to Cart
+                                </button>
+                                <a href="book-details.html?id=${book.id}" 
+                                   class="btn" 
+                                   style="background: #34495e; color: white;">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Add book to cart
+        async function addToCart(bookId) {
+            try {
+                await fetch(`/api/cart?bookId=${bookId}`, { 
+                    method: 'POST' 
+                });
+                alert('✅ Book added to cart successfully!');
+            } catch (error) {
+                alert('Failed to add book to cart');
+            }
+        }
+
+        // Search functionality
+        function searchBooks() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            
+            if (query === '') {
+                displayBooks(allBooks);
+                return;
+            }
+
+            const filteredBooks = allBooks.filter(book => 
+                book.title.toLowerCase().includes(query) || 
+                book.author.toLowerCase().includes(query) ||
+                (book.description && book.description.toLowerCase().includes(query))
+            );
+
+            displayBooks(filteredBooks);
+        }
+
+        // Initialize the page
+        window.onload = loadBooks;
+    </script>
+</body>
+</html>

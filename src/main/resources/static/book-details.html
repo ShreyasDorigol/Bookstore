@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Details</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>📖 Book Details</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <a href="index.html" style="text-decoration: none; color: #667eea; font-size: 1.1rem;">← Back to Home</a>
+        
+        <div id="bookDetails" style="margin-top: 30px; display: flex; gap: 40px; flex-wrap: wrap;">
+            <!-- JavaScript will fill this area -->
+        </div>
+    </div>
+
+    <script>
+        async function loadBookDetails() {
+            // Get book id from URL (example: book-details.html?id=1)
+            const urlParams = new URLSearchParams(window.location.search);
+            const bookId = urlParams.get('id');
+
+            if (!bookId) {
+                document.getElementById('bookDetails').innerHTML = "<h2>Book not found!</h2>";
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/books/${bookId}`);
+                const book = await response.json();
+
+                document.getElementById('bookDetails').innerHTML = `
+                    <div style="flex: 1; min-width: 300px;">
+                        <img src="${book.imageUrl}" alt="${book.title}" 
+                             style="width: 100%; max-width: 400px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);">
+                    </div>
+                    
+                    <div style="flex: 1; min-width: 300px;">
+                        <h1>${book.title}</h1>
+                        <h3>by ${book.author}</h3>
+                        <p class="price" style="font-size: 2rem;">₹${book.price}</p>
+                        <p style="margin: 20px 0; font-size: 1.1rem;">${book.description}</p>
+                        
+                        <button class="btn btn-primary" style="font-size: 1.2rem; padding: 15px 30px;" 
+                                onclick="addToCart(${book.id})">
+                            Add to Cart
+                        </button>
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('bookDetails').innerHTML = "<h2>Error loading book details</h2>";
+            }
+        }
+
+        async function addToCart(bookId) {
+            await fetch(`/api/cart?bookId=${bookId}`, { method: 'POST' });
+            alert('✅ Book added to cart successfully!');
+        }
+
+        // Load book when page opens
+        window.onload = loadBookDetails;
+    </script>
+</body>
+</html>
