@@ -24,7 +24,6 @@ A full-stack online bookstore web application built with **Spring Boot** and **v
 - 🛒 Session-based shopping cart (add, remove, quantity tracking)
 - 📄 Individual book detail pages
 - 💳 Checkout flow with order confirmation
-- 🔑 Login and Sign Up pages
 - 🎨 Premium dark-gold UI with smooth CSS animations
 - 📱 Fully responsive design for mobile and desktop
 
@@ -58,8 +57,6 @@ bookstore/
 │               ├── book-details.html            # Book detail page
 │               ├── cart.html                    # Shopping cart
 │               ├── confirmation.html            # Order confirmation
-│               ├── login.html                   # Login page
-│               ├── signup.html                  # Sign up page
 │               └── styles.css                   # Premium CSS
 └── pom.xml                                      # Maven dependencies
 ```
@@ -110,8 +107,6 @@ http://localhost:8080
 | 📖 Book Details | `http://localhost:8080/book-details.html?id=1` |
 | 🛒 Shopping Cart | `http://localhost:8080/cart.html` |
 | ✅ Order Confirmation | `http://localhost:8080/confirmation.html` |
-| 🔑 Login | `http://localhost:8080/login.html` |
-| 📝 Sign Up | `http://localhost:8080/signup.html` |
 | 🗄️ H2 Database Console | `http://localhost:8080/h2-console` |
 
 ---
